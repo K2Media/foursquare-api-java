@@ -201,10 +201,10 @@ public class FoursquareApi {
                     {
                         JSONObject response = responses.getJSONObject(i);
                         if (response != null) {
-                            JSONObject responseObject = response.getJSONObject("response");
-                            if (responseObject != null) {
-                                JSONObject jsonObject = responseObject.getJSONObject(attribute);
-                                if (jsonObject != null) {
+                            if (response.has("response")) {
+                                JSONObject responseObject = response.getJSONObject("response");
+                                if (responseObject.has(attribute)) {
+                                    JSONObject jsonObject = responseObject.getJSONObject(attribute);
                                     result.add((T) JSONFieldParser.parseEntity(clazz, jsonObject, this.skipNonExistingFields));
                                 }
                             }
