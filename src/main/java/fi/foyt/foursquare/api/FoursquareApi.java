@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
+import fi.foyt.foursquare.api.entities.notifications.ReplyNotification;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,6 +65,8 @@ import fi.foyt.foursquare.api.io.IOHandler;
 import fi.foyt.foursquare.api.io.Method;
 import fi.foyt.foursquare.api.io.MultipartParameter;
 import fi.foyt.foursquare.api.io.Response;
+
+import javax.annotation.Nullable;
 
 /**
  * Entry point for FoursquareAPI.
@@ -1281,6 +1287,30 @@ public class FoursquareApi {
       throw new FoursquareApiException(e);
     }
   }
+
+    /**
+     * Notify a user about their check-in.  This reply will only be visible to the user
+     *
+     * @param checkinId the ID of the checkin to add a comment to
+     * @param text      the text of the reply, up to 200 characters.
+     * @return Reply entity wrapped in Result object
+     * @throws FoursquareApiException when something unexpected happens
+     * @see <a href="https://developer.foursquare.com/docs/checkins/reply.html" target="_blank">https://developer.foursquare.com/docs/checkins/reply.html</a>
+     */
+    public Result<ReplyNotification> checkinsReply(String checkinId, String text, String url, String contentId) throws FoursquareApiException {
+        try {
+            ApiRequestResponse response = doApiRequest(Method.POST, "checkins/" + checkinId + "/reply", true, "text", text, "url", url, "contentId", contentId);
+            ReplyNotification result = null;
+
+            if (response.getMeta().getCode() == 200) {
+                result = (ReplyNotification) JSONFieldParser.parseEntity(ReplyNotification.class, response.getResponse().getJSONObject("reply"), this.skipNonExistingFields);
+            }
+
+            return new Result<ReplyNotification>(response.getMeta(), result);
+        } catch (JSONException e) {
+            throw new FoursquareApiException(e);
+        }
+    }
 
   /**
    * Gives details about a tip, including which users (especially friends) have marked the tip to-do or done.
