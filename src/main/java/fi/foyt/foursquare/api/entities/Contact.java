@@ -30,7 +30,16 @@ public class Contact implements FoursquareEntity {
   public String getPhone() {
     return phone;
   }
-  
+
+    /**
+     * Returns formatted phone number
+     *
+     * @return formatted phone number
+     */
+    public String getFormattedPhone() {
+        return formattedPhone;
+    }
+
   /**
    * Returns twitter id
    * 
@@ -62,4 +71,5 @@ public class Contact implements FoursquareEntity {
   private String facebook;
   private String twitter;
   private String phone;
+    private String formattedPhone;
 }
